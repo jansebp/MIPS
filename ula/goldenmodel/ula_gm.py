@@ -21,7 +21,6 @@ with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w') as f:
         for a in range(0, MAX_BIT_VALUE + 1):
             for b in range(0, MAX_BIT_VALUE + 1):
                 for cin in range(0, constants.RANGES.get(FILENAME)):
-                    output = None
                     if (op == 2) or (op == 6):
                         out, c_out = modules.ULA.ula(a, b, cin, op)
 
@@ -32,8 +31,10 @@ with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w') as f:
                     else:
                         out = modules.ULA.ula(a, b, cin, op)
                         c_out = 'x'
+                        cin = 'x'
 
                         f.write(
                             format(op, formatter_op) + constants.DELIMITER + format(a, formatter) + constants.DELIMITER
-                            + format(b, formatter) + constants.DELIMITER + str(cin) + constants.DELIMITER
-                            + format(out, formatter) + constants.DELIMITER + c_out * MAX_BIT_VALUE.bit_length() + '\n')
+                            + format(b, formatter) + constants.DELIMITER + cin * MAX_BIT_VALUE.bit_length()
+                            + constants.DELIMITER + format(out, formatter) + constants.DELIMITER
+                            + c_out * MAX_BIT_VALUE.bit_length() + '\n')
