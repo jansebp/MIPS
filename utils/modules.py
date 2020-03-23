@@ -1,3 +1,5 @@
+from utils import constants
+
 class Inv:
     @staticmethod
     def inverter(value, number_bits):
@@ -72,3 +74,113 @@ class Decoder:
         output[(qt_bits_output - 1) - input_value] = 1
 
         return ''.join(map(str, output))
+
+
+class Adder:
+    @staticmethod
+    def adder(in_a, in_b, c_in):
+        p = in_a ^ in_b
+        g = in_a & in_b
+
+        output = p ^ c_in
+        c_out = g | (p & c_in)
+
+        return output, c_out
+
+
+class Sub:
+    @staticmethod
+    def sub(in_a, in_b, c_in):
+        maior = in_a if in_a > in_b else in_b
+        bits_a = in_a.bit_length()
+
+        if maior == 0:
+            maior = 1
+        if in_a == 0:
+            bits_a = 1
+
+        max_bits = constants.MAX_VALUE_BITS.get(maior.bit_length())
+
+        p = in_a ^ in_b
+        g = Inv.inverter(in_a ^ in_b, max_bits)
+
+        output = p ^ c_in
+        c_out = (c_in & g) | (in_b & Inv.inverter(in_a, constants.MAX_VALUE_BITS.get(bits_a)))
+
+        return output, c_out
+
+class ULA:
+    @staticmethod
+    def func_and(in_a, in_b):
+        return in_a & in_b
+
+    @staticmethod
+    def func_or(in_a, in_b):
+        return in_a | in_b
+
+    @staticmethod
+    def func_xor(in_a, in_b):
+        return in_a ^ in_b
+
+    @staticmethod
+    def func_nor(in_a, in_b):
+        maior = in_a if in_a > in_b else in_b
+
+        return ULA.func_xor(ULA.func_or(in_a, in_b), constants.MAX_VALUE_BITS.get(maior.bit_length()))
+
+    @staticmethod
+    def func_nand(in_a, in_b):
+        maior = in_a if in_a > in_b else in_b
+
+        return ULA.func_xor(ULA.func_and(in_a, in_b), constants.MAX_VALUE_BITS.get(maior.bit_length()))
+
+    @staticmethod
+    def func_sum(in_a, in_b, c_in):
+        p = ULA.func_xor(in_a, in_b)    # p = in_a ^ in_b
+        g = ULA.func_and(in_a, in_b)    # g = in_a & in_b
+
+        output = ULA.func_xor(p, c_in)  # output = p ^ c_in
+        c_out = ULA.func_or(g, ULA.func_and(p, c_in))   # c_out = g | (p & c_in)
+
+        return output, c_out
+
+    @staticmethod
+    def func_sub(in_a, in_b, c_in):
+        maior = in_a if in_a > in_b else in_b
+        bits_a = in_a.bit_length()
+
+        if maior == 0:
+            maior = 1
+        if in_a == 0:
+            bits_a = 1
+
+        p = ULA.func_xor(in_a, in_b)    # p = in_a ^ in_b
+        g = ULA.func_xor(in_a, maior)   # g = not (in_a ^ in_b)
+
+        output = ULA.func_xor(p, c_in)  # output = p ^ c_in
+        c_out = ULA.func_or(ULA.func_and(c_in, g), ULA.func_and(in_b, ULA.func_xor(in_a, bits_a)))
+        # c_out = (c_in & g) | (in_b & (not in_a))
+
+        return output, c_out
+
+    @staticmethod
+    def func_slt(in_a, in_b):
+        if in_a < in_b:
+            return 1
+        return 0
+
+    @staticmethod
+    def ula(in_a, in_b, cin, operation):
+
+        op_ula = {
+            0: ULA.func_and(in_a, in_b),
+            1: ULA.func_or(in_a, in_b),
+            2: ULA.func_sum(in_a, in_b, cin),
+            3: ULA.func_nor(in_a, in_b),
+            4: ULA.func_xor(in_a, in_b),
+            5: ULA.func_nand(in_a, in_b),
+            6: ULA.func_sub(in_a, in_b, cin),
+            7: ULA.func_slt(in_a, in_b)
+        }
+
+        return op_ula.get(operation, "Operacao nao encontrada")
