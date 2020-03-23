@@ -28,6 +28,8 @@ RANGES = {
     'mux4': 4,      # Range de valores para o input 'sel' do MUX4
     'adder': 2,     # Range de valores para o input 'cin' do ADDER
     'sub': 2,       # Range de valores para o input 'cin' do SUB
+    'ula': 2,       # Range de valores para o input 'cin' da ULA
+    'ula_op': 8,     # Range de valores de OP para a ULA
     'enable': 2,    # Range de valores para o Enable
     'reset': 2      # Range de valores para o Reset
 }

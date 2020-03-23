@@ -126,11 +126,17 @@ class ULA:
     def func_nor(in_a, in_b):
         maior = in_a if in_a > in_b else in_b
 
+        if maior == 0:
+            maior = 1
+
         return ULA.func_xor(ULA.func_or(in_a, in_b), constants.MAX_VALUE_BITS.get(maior.bit_length()))
 
     @staticmethod
     def func_nand(in_a, in_b):
         maior = in_a if in_a > in_b else in_b
+
+        if maior == 0:
+            maior = 1
 
         return ULA.func_xor(ULA.func_and(in_a, in_b), constants.MAX_VALUE_BITS.get(maior.bit_length()))
 
