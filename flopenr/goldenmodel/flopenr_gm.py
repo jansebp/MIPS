@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-
+import os
 import pathlib
 
 from utils import constants, modules
 
 pathlib.Path(constants.TV_PATH).mkdir(parents=True, exist_ok=True)
 pathlib.Path(constants.TB_PATH).mkdir(parents=True, exist_ok=True)
+FILENAME = os.path.splitext(os.path.basename(os.path.realpath(__file__)))[0].split('_')[0]
 
-MAX_BIT_VALUE = constants.MAX_VALUE_BITS_1
+N_BITS = 1
+MAX_BIT_VALUE = constants.MAX_VALUE_BITS.get(N_BITS)
 formatter = '0' + str(MAX_BIT_VALUE.bit_length()) + 'b'
 
-with open(constants.TV_PATH + constants.FLOPENR_TV_NAME, 'w') as f:
+with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w') as f:
     clk = 0
     q = 'x'
 
@@ -19,7 +21,7 @@ with open(constants.TV_PATH + constants.FLOPENR_TV_NAME, 'w') as f:
             RESET_VALUE = 0
             for d in range(0, MAX_BIT_VALUE + 1):
                 for aux in range(0, 2):
-                    for enable in range(0, constants.ENABLE_RANGE):
+                    for enable in range(0, constants.RANGES.get('enable')):
                         for aux2 in range(0, constants.CLOCK_PERIOD):
 
                             q = modules.Flop.flopenr(d, enable, clk, RESET_VALUE, q)
@@ -37,8 +39,8 @@ with open(constants.TV_PATH + constants.FLOPENR_TV_NAME, 'w') as f:
         else:
             for d in range(0, MAX_BIT_VALUE + 1):
                 for aux in range(0, 2):
-                    for enable in range(0, constants.ENABLE_RANGE):
-                        for reset in range(0, constants.RESET_RANGE):
+                    for enable in range(0, constants.RANGES.get('enable')):
+                        for reset in range(0, constants.RANGES.get('reset')):
                             for aux2 in range(0, constants.CLOCK_PERIOD):
 
                                 q = modules.Flop.flopenr(d, enable, clk, reset, q)
