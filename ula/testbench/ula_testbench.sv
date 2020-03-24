@@ -34,14 +34,17 @@ end
 
 
 always @(posedge clk) begin
-	{A, Output_esperado} = vetor_teste[idx];
+	{ulaOp[2:0], in_A, in_B, c_In, Output_esperado} = vetor_teste[idx];
 end
 
 always @(negedge clk)
 if (~rst) begin
 	if (Y !== Output_esperado) begin
 		$display(">> Erro!");
-		$display(">>>> Input = %b", {A});
+		$display(">>>> Operacao = %b", {ulaOp});
+		$display(">>>> Input A = %b", {in_A});
+		$display(">>>> Input B = %b", {in_B});
+		$display(">>>> Input Cin = %b", {c_In});
 		$display(">>>> Output = %b ; Output Esperado: %b", Y, Output_esperado);
 		qt_erros = qt_erros + 1;
 	end
