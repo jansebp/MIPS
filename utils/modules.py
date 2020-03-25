@@ -182,7 +182,7 @@ class ULA:
             3: ULA.func_nor(in_a, in_b),
             #4: ULA.func_nand(in_a, in_b),
             5: ULA.func_xor(in_a, in_b),
-            6: ULA.func_sub2(in_a, in_b, cin),
+            6: ULA.func_sub(in_a, in_b, cin),
             7: ULA.func_slt(in_a, in_b)
         }
 
