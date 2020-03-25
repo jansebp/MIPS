@@ -1,4 +1,4 @@
-from utils import constants
+from utils import constants, util
 
 class Inv:
     @staticmethod
@@ -99,15 +99,16 @@ class Sub:
         if in_a == 0:
             bits_a = 1
 
-        max_bits = constants.MAX_VALUE_BITS.get(maior.bit_length())
+        max_bits = util.qt_numbers_bit(maior.bit_length())
 
         p = in_a ^ in_b
         g = Inv.inverter(in_a ^ in_b, max_bits)
 
         output = p ^ c_in
-        c_out = (c_in & g) | (in_b & Inv.inverter(in_a, constants.MAX_VALUE_BITS.get(bits_a)))
+        c_out = (c_in & g) | (in_b & Inv.inverter(in_a, util.qt_numbers_bit(bits_a)))
 
         return output, c_out
+
 
 class ULA:
     @staticmethod
@@ -129,7 +130,7 @@ class ULA:
         if maior == 0:
             maior = 1
 
-        return ULA.func_xor(ULA.func_or(in_a, in_b), constants.MAX_VALUE_BITS.get(maior.bit_length()))
+        return (in_a | in_b) ^ util.qt_numbers_bit(maior.bit_length())
 
     @staticmethod
     def func_nand(in_a, in_b):
@@ -138,34 +139,30 @@ class ULA:
         if maior == 0:
             maior = 1
 
-        return ULA.func_xor(ULA.func_and(in_a, in_b), constants.MAX_VALUE_BITS.get(maior.bit_length()))
+        return (in_a & in_b) ^ util.qt_numbers_bit(maior.bit_length())
 
     @staticmethod
     def func_sum(in_a, in_b, c_in):
-        p = ULA.func_xor(in_a, in_b)    # p = in_a ^ in_b
-        g = ULA.func_and(in_a, in_b)    # g = in_a & in_b
+        p = in_a ^ in_b
+        g = in_a & in_b
 
-        output = ULA.func_xor(p, c_in)  # output = p ^ c_in
-        c_out = ULA.func_or(g, ULA.func_and(p, c_in))   # c_out = g | (p & c_in)
+        output = p ^ c_in
+        c_out = g | (p & c_in)
 
         return output, c_out
 
     @staticmethod
     def func_sub(in_a, in_b, c_in):
-        maior = in_a if in_a > in_b else in_b
-        bits_a = in_a.bit_length()
+        if in_a < in_b:
+            a = util.qt_numbers_bit(32) - in_a
+            b = util.qt_numbers_bit(32) - in_b
 
-        if maior == 0:
-            maior = 1
-        if in_a == 0:
-            bits_a = 1
+            c_out = 1
 
-        p = ULA.func_xor(in_a, in_b)    # p = in_a ^ in_b
-        g = ULA.func_xor(in_a, maior)   # g = not (in_a ^ in_b)
-
-        output = ULA.func_xor(p, c_in)  # output = p ^ c_in
-        c_out = ULA.func_or(ULA.func_and(c_in, g), ULA.func_and(in_b, ULA.func_xor(in_a, bits_a)))
-        # c_out = (c_in & g) | (in_b & (not in_a))
+            output = ((a - b) ^ util.qt_numbers_bit(32)) + 1 - c_in
+        else:
+            output = (in_a - in_b)
+            c_out = 0
 
         return output, c_out
 
@@ -183,9 +180,9 @@ class ULA:
             1: ULA.func_or(in_a, in_b),
             2: ULA.func_sum(in_a, in_b, cin),
             3: ULA.func_nor(in_a, in_b),
-            4: ULA.func_xor(in_a, in_b),
-            5: ULA.func_nand(in_a, in_b),
-            6: ULA.func_sub(in_a, in_b, cin),
+            #4: ULA.func_nand(in_a, in_b),
+            5: ULA.func_xor(in_a, in_b),
+            6: ULA.func_sub2(in_a, in_b, cin),
             7: ULA.func_slt(in_a, in_b)
         }
 
