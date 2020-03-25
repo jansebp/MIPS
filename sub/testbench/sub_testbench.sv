@@ -9,7 +9,7 @@ logic Output, Output_esperado;
 logic [3:0] qt_erros, idx;
 logic [7:0] vetor_teste [4:0];
 
-adder DUV(.inA(In_A), .inB(In_B), .cin(C_In), .y(Output));
+sub DUV(.inA(In_A), .inB(In_B), .cin(C_In), .y(Output));
 
 always begin
 	clk = 1;
