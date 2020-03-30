@@ -1,11 +1,11 @@
 module flopenr(
-    input logic d,
+    input logic clk_in,
     input logic en,
-    input logic clk,
-    input logic reset,
+    input logic rst_in,
+    input logic d,
     output logic q);
 
-    always_ff @(posedge clk, posedge reset)
-        if (reset) q <= 0;
+    always_ff @(posedge clk_in, posedge rst_in)
+        if (rst_in) q <= 0;
         else if (en) q <= d;
 endmodule
