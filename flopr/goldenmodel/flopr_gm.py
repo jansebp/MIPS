@@ -26,12 +26,13 @@ with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w+') as f:
                         q = modules.Flop.flopr(d, clk, RESET_VALUE, q)
 
                         if q == 'x':
-                            f.write(format(d, formatter) + constants.DELIMITER + str(clk) + constants.DELIMITER
-                                    + str(RESET_VALUE) + constants.DELIMITER + str('x' * MAX_BIT_VALUE.bit_length())
+                            f.write(str(clk) + constants.DELIMITER + str(RESET_VALUE) + constants.DELIMITER
+                                    + format(d, formatter) + constants.DELIMITER
+                                    + str('x' * MAX_BIT_VALUE.bit_length())
                                     + '\n')
                         else:
-                            f.write(format(d, formatter) + constants.DELIMITER + str(clk) + constants.DELIMITER
-                                    + str(RESET_VALUE) + constants.DELIMITER + format(q, formatter) + '\n')
+                            f.write(str(clk) + constants.DELIMITER + str(RESET_VALUE) + constants.DELIMITER
+                                    + format(d, formatter) + constants.DELIMITER + format(q, formatter) + '\n')
 
                         clk = int(not clk)
         else:
@@ -43,11 +44,11 @@ with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w+') as f:
                             q = modules.Flop.flopr(d, clk, reset, q)
 
                             if q == 'x':
-                                f.write(format(d, formatter) + constants.DELIMITER + str(clk) + constants.DELIMITER
-                                        + str(reset) + constants.DELIMITER + str('x' * MAX_BIT_VALUE.bit_length())
-                                        + '\n')
+                                f.write(str(clk) + constants.DELIMITER + str(reset) + constants.DELIMITER
+                                        + format(d, formatter) + constants.DELIMITER
+                                        + str('x' * MAX_BIT_VALUE.bit_length()) + '\n')
                             else:
-                                f.write(format(d, formatter) + constants.DELIMITER + str(clk) + constants.DELIMITER
-                                        + str(reset) + constants.DELIMITER + format(q, formatter) + '\n')
+                                f.write(str(clk) + constants.DELIMITER + str(reset) + constants.DELIMITER
+                                        + format(d, formatter) + constants.DELIMITER + format(q, formatter) + '\n')
 
                             clk = int(not clk)
