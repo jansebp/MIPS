@@ -1,4 +1,5 @@
-from utils import constants, util
+from utils import util
+
 
 class Inv:
     @staticmethod
@@ -71,7 +72,24 @@ class Signal:
 
         value = str(format(input_value, formatter_input))
 
-        return str(value[:1])*(qt_bits_output - qt_bits_input) + str(value)
+        return str(value[:1]) * (qt_bits_output - qt_bits_input) + str(value)
+
+    @staticmethod
+    def shift_left(input_value, qt_shift, qt_bits_output):
+        formatter_output = '0' + str(qt_bits_output) + 'b'
+        output = input_value << qt_shift
+
+        return str(format(output, formatter_output))[-qt_bits_output:]
+
+    @staticmethod
+    def shift_left_aggr(input_value_addr, input_value_reg, qt_shift, qt_bits_output):
+        formatter_addr = '0' + str(qt_bits_output - 4) + 'b'
+        formatter_reg = '0' + str(32) + 'b'
+
+        reg = str(format(input_value_reg, formatter_reg))[:4]
+        addr_shifted = str(format(input_value_addr << qt_shift, formatter_addr))[-(qt_bits_output - 4):]
+
+        return str(reg + addr_shifted)[-qt_bits_output:]
 
 
 class Decoder:
@@ -190,7 +208,7 @@ class ULA:
             1: ULA.func_or(in_a, in_b),
             2: ULA.func_sum(in_a, in_b, cin),
             3: ULA.func_nor(in_a, in_b),
-            #4: ULA.func_nand(in_a, in_b),
+            # 4: ULA.func_nand(in_a, in_b),
             5: ULA.func_xor(in_a, in_b),
             6: ULA.func_sub(in_a, in_b, cin),
             7: ULA.func_slt(in_a, in_b)

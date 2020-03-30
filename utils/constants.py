@@ -21,7 +21,9 @@ TV_NAME = {
     'sub': 'sub.tv',
     'ula': 'ula.tv',
     'uladec': 'uladec.tv',
-    'signext': 'signext.tv'
+    'signext': 'signext.tv',
+    'sl2': 'sl2.tv',
+    'sl2aggr': 'sl2aggr.tv'
 }
 
 RANGES = {
@@ -32,7 +34,9 @@ RANGES = {
     'ula': 2,       # Range de valores para o input 'cin' da ULA
     'ula_op': 8,    # Range de valores de OP para a ULA
     'enable': 2,    # Range de valores para o Enable
-    'reset': 2      # Range de valores para o Reset
+    'reset': 2,     # Range de valores para o Reset
+    'sl2': 2,       # Quantidade de Bits para efetuar o SHIFT
+    'sl2aggr': 2,   # Quantidade de Bits para efetuar o SHIFT
 }
 
 CLOCK_PERIOD = 2                # Tempo de execucao para o CLK sair de HIGH e voltar para HIGH
@@ -49,7 +53,10 @@ N_BITS_INPUT = {
     'sub': 1,
     'tristate': 1,
     'ula': 32,
-    'signext': 16
+    'signext': 16,
+    'sl2': 32,
+    'sl2aggr': 26,
+    'sl2aggr_reg': 32
 }
 
 # Quantidade de bits do output de cada módulo
@@ -64,5 +71,7 @@ N_BITS_OUTPUT = {
     'sub': 1,
     'tristate': 1,
     'ula': 32,
-    'signext': 32
+    'signext': 32,
+    'sl2': 32,
+    'sl2aggr': 32,
 }
