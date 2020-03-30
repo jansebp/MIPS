@@ -3,19 +3,19 @@
 module decoder_testbench();
 
 logic clk, rst;
-logic [4:0] Input;
-logic [31:0] Output, Output_esperado;
+logic [4:0] a;
+logic [31:0] Out, Out_esp;
 
 logic [5:0] qt_erros, idx;
 logic [36:0] vetor_teste [31:0];
 
-decoder DUV(.in(Input), .out(Output));
+decoder DUV(.a(a), .y(Out));
 
 always begin
 	clk = 1;
 	#10;
 	clk = 0;
-	#10;
+	#5;
 end
 
 initial begin
@@ -24,7 +24,7 @@ $readmemb("C:/Users/janse/Documents/GitHub/MIPS/decoder/simulation/modelsim/deco
 idx = 0; qt_erros = 0;
 
 rst=1'b1;
-#10;
+#5;
 rst=0;
 
 $display("########## Testbench do Decoder ##########");
@@ -33,15 +33,15 @@ end
 
 
 always @(posedge clk) begin
-	{Input, Output_esperado} = vetor_teste[idx];
+	{a[4:0], Out_esp[31:0]} = vetor_teste[idx];
 end
 
 always @(negedge clk)
 if (~rst) begin
-	if (Output !== Output_esperado) begin
+	if (Out !== Out_esp) begin
 		$display(">> Erro!");
-		$display(">>>> Input = %b", {Input});
-		$display(">>>> Output = %b ; Output Esperado: %b", Output, Output_esperado);
+		$display(">>>> Input = %b", {a});
+		$display(">>>> Output = %b ; Output Esperado: %b", Out, Out_esp);
 		qt_erros = qt_erros + 1;
 	end
 
