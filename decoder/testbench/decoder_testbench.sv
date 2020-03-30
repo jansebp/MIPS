@@ -19,16 +19,16 @@ always begin
 end
 
 initial begin
-$readmemb("C:/Users/janse/Documents/GitHub/MIPS/decoder/simulation/modelsim/decoder.tv", vetor_teste);
+    $readmemb("decoder.tv", vetor_teste);
 
-idx = 0; qt_erros = 0;
+    idx = 0; qt_erros = 0;
 
-rst=1'b1;
-#5;
-rst=0;
+    rst=1'b1;
+    #5;
+    rst=0;
 
-$display("########## Testbench do Decoder ##########");
-$display("Resultado:");
+    $display("########## Testbench do Decoder ##########");
+    $display("Resultado:");
 end
 
 
@@ -37,22 +37,20 @@ always @(posedge clk) begin
 end
 
 always @(negedge clk)
-if (~rst) begin
-	if (Out !== Out_esp) begin
-		$display(">> Erro!");
-		$display(">>>> Input = %b", {a});
-		$display(">>>> Output = %b ; Output Esperado: %b", Out, Out_esp);
-		qt_erros = qt_erros + 1;
-	end
+    if (~rst) begin
+        if (Out !== Out_esp) begin
+            $display(">> Erro!");
+            $display(">>>> Input = %b", {a});
+            $display(">>>> Output = %b ; Output Esperado: %b", Out, Out_esp);
+            qt_erros = qt_erros + 1;
+        end
 
-	idx = idx + 1;
+        idx = idx + 1;
 
-	if(vetor_teste[idx] === 37'bx) begin
-		$display(">> Finalizado!");
-		$display(">>>> %d testes executados com %d erros", idx, qt_erros);
-		$stop;
-	end
-end
-
-
+        if(vetor_teste[idx] === 37'bx) begin
+            $display(">> Finalizado!");
+            $display(">>>> %d testes executados com %d erros", idx, qt_erros);
+            $stop;
+        end
+    end
 endmodule
