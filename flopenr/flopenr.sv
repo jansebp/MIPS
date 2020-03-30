@@ -6,6 +6,6 @@ module flopenr(
     output logic q);
 
     always_ff @(posedge clk_in, posedge rst_in)
-        if (rst_in) q <= 0;
+        if (rst_in) q <= 1'b0;
         else if (en) q <= d;
 endmodule
