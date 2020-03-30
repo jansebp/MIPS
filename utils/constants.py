@@ -23,12 +23,14 @@ TV_NAME = {
     'uladec': 'uladec.tv',
     'signext': 'signext.tv',
     'sl2': 'sl2.tv',
-    'sl2aggr': 'sl2aggr.tv'
+    'sl2aggr': 'sl2aggr.tv',
+    'regbank': 'regbank.tv'
 }
 
 RANGES = {
     'mux': 2,       # Range de valores para o input 'sel' do MUX
     'mux4': 4,      # Range de valores para o input 'sel' do MUX4
+    'regbank': 2,   # Range de valores para o input 'clk' do BANCO DE REGISTRADORES
     'adder': 2,     # Range de valores para o input 'cin' do ADDER
     'sub': 2,       # Range de valores para o input 'cin' do SUB
     'ula': 2,       # Range de valores para o input 'cin' da ULA
@@ -56,7 +58,8 @@ N_BITS_INPUT = {
     'signext': 16,
     'sl2': 32,
     'sl2aggr': 26,
-    'sl2aggr_reg': 32
+    'sl2aggr_reg': 32,
+    'regbank': 5
 }
 
 # Quantidade de bits do output de cada módulo
@@ -74,4 +77,5 @@ N_BITS_OUTPUT = {
     'signext': 32,
     'sl2': 32,
     'sl2aggr': 32,
+    'regbank': 32
 }

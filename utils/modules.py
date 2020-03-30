@@ -41,6 +41,33 @@ class Mux:
         if selection == 3:
             return input_d
 
+    @staticmethod
+    def mux8(d0, d1, d2, d3, d4, d5, d6, d7, sel):
+        selection = str(format(sel, '03b'))
+        s1 = selection[:2]
+        s2 = selection[2:]
+        y0 = Mux.mux4_v2(d0, d1, d2, d3, int(s1, 2))
+        y1 = Mux.mux4_v2(d4, d5, d6, d7, int(s1, 2))
+
+        return Mux.mux(y0, y1, int(s2))
+
+    @staticmethod
+    def mux32(d0, d1, d2, d3, d4, d5, d6, d7,
+              d8, d9, d10, d11, d12, d13, d14, d15,
+              d16, d17, d18, d19, d20, d21, d22, d23,
+              d24, d25, d26, d27, d28, d29, d30, d31,
+              sel):
+        selection = str(format(sel, '05b'))
+        s1 = selection[:3]
+        s2 = selection[3:]
+
+        y0 = Mux.mux8(d0, d1, d2, d3, d4, d5, d6, d7, int(s1, 2))
+        y1 = Mux.mux8(d8, d9, d10, d11, d12, d13, d14, d15, int(s1, 2))
+        y2 = Mux.mux8(d16, d17, d18, d19, d20, d21, d22, d23, int(s1, 2))
+        y3 = Mux.mux8(d24, d25, d26, d27, d28, d29, d30, d31, int(s1, 2))
+
+        return Mux.mux4_v2(y0, y1, y2, y3, int(s2, 2))
+
 
 class Flop:
     @staticmethod
@@ -63,6 +90,36 @@ class Flop:
                 return in_d
 
         return q
+
+    @staticmethod
+    def register_bank(a1, a2, a3, wd3, we3, clk, rst):
+        output_and = [0] * 32
+        output_register = [0] * 32
+        output_decoder = list(map(int, Decoder.decoder(a3, 32)))
+
+        for i in range(0, 32):
+            output_and[i] = we3 & output_decoder[i]
+            output_register[i] = Flop.flopenr(wd3, output_and[i], clk, rst, output_register[i])
+
+        rd1 = Mux.mux32(output_register[0], output_register[1], output_register[2], output_register[3],
+                        output_register[4], output_register[5], output_register[6], output_register[7],
+                        output_register[8], output_register[9], output_register[10], output_register[11],
+                        output_register[12], output_register[13], output_register[14], output_register[15],
+                        output_register[16], output_register[17], output_register[18], output_register[19],
+                        output_register[20], output_register[21], output_register[22], output_register[23],
+                        output_register[24], output_register[25], output_register[26], output_register[27],
+                        output_register[28], output_register[29], output_register[30], output_register[31],
+                        a1)
+        rd2 = Mux.mux32(output_register[0], output_register[1], output_register[2], output_register[3],
+                        output_register[4], output_register[5], output_register[6], output_register[7],
+                        output_register[8], output_register[9], output_register[10], output_register[11],
+                        output_register[12], output_register[13], output_register[14], output_register[15],
+                        output_register[16], output_register[17], output_register[18], output_register[19],
+                        output_register[20], output_register[21], output_register[22], output_register[23],
+                        output_register[24], output_register[25], output_register[26], output_register[27],
+                        output_register[28], output_register[29], output_register[30], output_register[31],
+                        a2)
+        return rd1, rd2
 
 
 class Signal:
