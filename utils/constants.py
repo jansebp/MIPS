@@ -20,7 +20,8 @@ TV_NAME = {
     'adder': 'adder.tv',
     'sub': 'sub.tv',
     'ula': 'ula.tv',
-    'uladec': 'uladec.tv'
+    'uladec': 'uladec.tv',
+    'signext': 'signext.tv'
 }
 
 RANGES = {
@@ -47,7 +48,8 @@ N_BITS_INPUT = {
     'mux4': 1,
     'sub': 1,
     'tristate': 1,
-    'ula': 32
+    'ula': 32,
+    'signext': 16
 }
 
 # Quantidade de bits do output de cada módulo
@@ -61,5 +63,6 @@ N_BITS_OUTPUT = {
     'mux4': 1,
     'sub': 1,
     'tristate': 1,
-    'ula': 32
+    'ula': 32,
+    'signext': 32
 }

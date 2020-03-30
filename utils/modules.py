@@ -64,6 +64,16 @@ class Flop:
         return q
 
 
+class Signal:
+    @staticmethod
+    def signal_ext(input_value, qt_bits_input, qt_bits_output):
+        formatter_input = '0' + str(qt_bits_input) + 'b'
+
+        value = str(format(input_value, formatter_input))
+
+        return str(value[:1])*(qt_bits_output - qt_bits_input) + str(value)
+
+
 class Decoder:
     @staticmethod
     def decoder(input_value, qt_bits_output):
