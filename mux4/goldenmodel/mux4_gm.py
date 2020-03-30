@@ -23,7 +23,7 @@ with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w') as f:
                         s1 = int(selection[0:1])
                         s2 = int(selection[1:2])
 
-                        f.write(format(a, formatter) + constants.DELIMITER + format(b, formatter) + constants.DELIMITER
-                                + format(c, formatter) + constants.DELIMITER + format(d, formatter)
-                                + constants.DELIMITER + str(s1) + constants.DELIMITER + str(s2) + constants.DELIMITER
-                                + format(modules.Mux.mux4(a, b, c, d, s1, s2), formatter) + '\n')
+                        f.write(str(s1) + str(s2) + constants.DELIMITER + format(a, formatter) + constants.DELIMITER
+                                + format(b, formatter) + constants.DELIMITER + format(c, formatter)
+                                + constants.DELIMITER + format(d, formatter) + constants.DELIMITER
+                                + format(modules.Mux.mux4_v2(a, b, c, d, s), formatter) + '\n')
