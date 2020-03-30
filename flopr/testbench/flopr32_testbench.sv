@@ -6,7 +6,7 @@ module flopr32_testbench();
     logic [31:0] Q, Q_esp;
 
     logic [4:0] qt_erros, idx;
-    logic [65:0] vetor_teste [8:0];
+    logic [66:0] vetor_teste [8:0];
 
     flopr32 DUV(.clk_in(clk_in), .rst_in(rst_in), .d(D), .q(Q));
 
