@@ -16,5 +16,6 @@ with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w') as f:
     for a in range(0, MAX_BIT_VALUE + 1):
         for b in range(0, MAX_BIT_VALUE + 1):
             for s in range(0, constants.RANGES.get(FILENAME)):
-                f.write(format(a, formatter) + constants.DELIMITER + format(b, formatter) + constants.DELIMITER + str(
-                    s) + constants.DELIMITER + format(modules.Mux.mux(a, b, s), formatter) + '\n')
+                f.write(str(s) + constants.DELIMITER + format(a, formatter) + constants.DELIMITER
+                        + format(b, formatter) + constants.DELIMITER + format(modules.Mux.mux(a, b, s), formatter)
+                        + '\n')
