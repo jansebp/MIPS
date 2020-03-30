@@ -18,7 +18,7 @@ module sl2_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/sl2/simulation/modelsim/sl2.tv", vetor_teste);
+        $readmemb("sl2.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 

@@ -18,7 +18,7 @@ module signext_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/signext/simulation/modelsim/signext.tv", vetor_teste);
+        $readmemb("signext.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 

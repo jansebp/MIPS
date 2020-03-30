@@ -22,7 +22,7 @@ module regbank_testbench();
 	end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/regbank/simulation/modelsim/regbank.tv", vetor_teste);
+        $readmemb("regbank.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 

@@ -18,7 +18,7 @@ module flopenr_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/flopenr/simulation/modelsim/flopenr.tv", vetor_teste);
+        $readmemb("flopenr.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 

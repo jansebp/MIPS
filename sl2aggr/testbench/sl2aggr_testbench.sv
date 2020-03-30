@@ -19,7 +19,7 @@ module sl2aggr_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/sl2aggr/simulation/modelsim/sl2aggr.tv", vetor_teste);
+        $readmemb("sl2aggr.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 

@@ -19,7 +19,7 @@ module mux4_1_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/mux4/simulation/modelsim/mux4.tv", vetor_teste);
+        $readmemb("mux4.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 
