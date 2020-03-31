@@ -1,13 +1,14 @@
 module ula32(
     input logic [2:0] ULAcontrole,
     input logic [31:0] SrcA, SrcB,
-    input logic addSub,
-
     output logic [31:0] ULAsaida,
     output logic overflow, zero
     );
 
     logic [31:0] cout, set;
+	 logic addSub;
+	
+	 assign addSub = (ULAcontrole == 1'b110 || ULAcontrole == 1'b111) ? 1'b1 : 1'b0;
 
     ula ula0(ULAcontrole, SrcA[0], SrcB[0], addSub, addSub, set[31], set[0], cout[0], ULAsaida[0]);
 

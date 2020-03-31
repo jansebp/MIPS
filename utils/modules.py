@@ -261,14 +261,84 @@ class ULA:
     def ula(in_a, in_b, cin, ula_controle):
 
         op_ula = {
-            0: ULA.func_and(in_a, in_b),        # 000
-            1: ULA.func_or(in_a, in_b),         # 001
-            2: Adder.adder(in_a, in_b, cin),    # 010
-            3: ULA.func_nor(in_a, in_b),        # 011
+            0: ULA.func_and(in_a, in_b),  # 000
+            1: ULA.func_or(in_a, in_b),  # 001
+            2: Adder.adder(in_a, in_b, cin),  # 010
+            3: ULA.func_nor(in_a, in_b),  # 011
             # 4: ULA.func_nand(in_a, in_b),     # 100
-            5: ULA.func_xor(in_a, in_b),        # 101
-            6: Sub.sub(in_a, in_b, cin),        # 110
-            7: ULA.func_slt(in_a, in_b)         # 111
+            5: ULA.func_xor(in_a, in_b),  # 101
+            6: Sub.sub(in_a, in_b, cin),  # 110
+            7: ULA.func_slt(in_a, in_b)  # 111
         }
 
         return op_ula.get(ula_controle, "Operação não encontrada")
+
+    @staticmethod
+    def ula(in_a, in_b, ula_controle):
+        zero = 0
+
+        if (ula_controle == 2) or (ula_controle == 6):
+            output, overflow = ULA.ula(in_a, in_b, ula_controle)
+        else:
+            output = ULA.ula(in_a, in_b, ula_controle)
+            overflow = 0
+
+        if output == 0:
+            zero = 1
+
+        return output, overflow, zero
+
+
+class Datapath:
+    # TODO: generalizar --
+    #  alu_result, output_overflow, zero = ULA.ula(srcA, srcB, ula_controle)
+    #  -- (ALUControl, SrcA, SrcB, ALUResult, Overflow, Zero)
+    @staticmethod
+    def datapath(clock, reset, iord, reg_dst, mem_to_reg, ir_write, reg_write, ula_srcA, branch, pc_write, ula_srcB,
+                 pc_src, ula_controle, rd):
+        zero, out_and_pc, pc_enable = 0
+        inputPC, outputPC, outRegInstr, outRegData, outRegA, outRegB, wd3, rd1, rd2 = 0
+        srcA, srcB, outSignExt, outShift2, alu_out, alu_result = 0
+        inShift2, outShiftJump, jumpADDR = 0
+        outMux5 = 0
+
+        out_and_pc = zero & branch
+        pc_enable = out_and_pc | pc_write
+
+        outputPC = Flop.flopenr(inputPC, pc_enable, clock, reset, outputPC)
+        output_address = Mux.mux(outputPC, alu_out, iord)
+        outRegInstr = Flop.flopenr(rd, ir_write, clock, reset, outRegInstr)
+        outRegData = Flop.flopr(rd, clock, reset, outRegData)
+        outRegDataAux = format(outRegData, '032b')
+
+        outMux5 = Mux.mux(int(outRegDataAux[-20:-16], 2), int(outRegDataAux[-15:-11], 2), reg_dst)
+        wd3 = Mux.mux(alu_out, outRegData, mem_to_reg)
+
+        rd1, rd2 = Flop.register_bank(int(outRegDataAux[-25:-21], 2), int(outRegDataAux[-20:-16], 2), outMux5, wd3,
+                                      reg_write, clock, reset)
+
+        outRegA = Flop.flopr(rd1, clock, reset, outRegA)
+        outRegB = Flop.flopr(rd2, clock, reset, outRegB)
+
+        output_wd = outRegB
+
+        srcA = Mux.mux(outputPC, outRegA, ula_srcA)
+        outSignExt = Signal.signal_ext(outRegDataAux[-15:], 32)
+        outShift2 = Signal.shift_left(outSignExt, 2, 32)
+        srcB = Mux.mux4_v2(outRegB, 4, outSignExt, outShift2, ula_srcB)
+
+        alu_result, output_overflow, zero = ULA.ula(srcA, srcB, ula_controle)
+
+        alu_out = Flop.flopenr(alu_result, clock, reset, alu_out)
+
+        inShift2 = int('000000' + outRegDataAux[-25:], 2)
+        outShiftJump = Signal.shift_left(inShift2, 2)
+
+        outPcAux = format(outputPC, '032b')
+        outShiftJumpAux = format(outShiftJump, '032b')
+
+        jumpADDR = int(outPcAux[-31:-28] + outShiftJumpAux[-27:], 2)
+
+        inputPC = Mux.mux4_v2(alu_result, alu_out, jumpADDR, 0, pc_src)
+
+        return output_address, output_wd, output_overflow
