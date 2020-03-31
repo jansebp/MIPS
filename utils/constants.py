@@ -14,6 +14,7 @@ TV_NAME = {
     'tristate': 'tristate.tv',
     'mux': 'mux.tv',
     'mux4': 'mux4.tv',
+    'mux8': 'mux8.tv',
     'flopr': 'flopr.tv',
     'flopenr': 'flopenr.tv',
     'decoder': 'decoder.tv',
@@ -30,6 +31,7 @@ TV_NAME = {
 RANGES = {
     'mux': 2,       # Range de valores para o input 'sel' do MUX
     'mux4': 4,      # Range de valores para o input 'sel' do MUX4
+    'mux8': 7,      # Range de valores para o input 'sel' do MUX8
     'regbank': 2,   # Range de valores para o input 'clk' do BANCO DE REGISTRADORES
     'adder': 2,     # Range de valores para o input 'cin' do ADDER
     'sub': 2,       # Range de valores para o input 'cin' do SUB
@@ -52,9 +54,10 @@ N_BITS_INPUT = {
     'inv': 1,
     'mux': 1,
     'mux4': 1,
+    'mux8': 1,
     'sub': 1,
     'tristate': 1,
-    'ula': 32,
+    'ula': 1,
     'signext': 16,
     'sl2': 32,
     'sl2aggr': 26,
@@ -71,9 +74,10 @@ N_BITS_OUTPUT = {
     'inv': 1,
     'mux': 1,
     'mux4': 1,
+    'mux8': 1,
     'sub': 1,
     'tristate': 1,
-    'ula': 32,
+    'ula': 1,
     'signext': 32,
     'sl2': 32,
     'sl2aggr': 32,

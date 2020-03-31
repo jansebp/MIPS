@@ -44,8 +44,8 @@ class Mux:
     @staticmethod
     def mux8(d0, d1, d2, d3, d4, d5, d6, d7, sel):
         selection = str(format(sel, '03b'))
-        s1 = selection[:2]
-        s2 = selection[2:]
+        s1 = selection[1:]
+        s2 = selection[:1]
         y0 = Mux.mux4_v2(d0, d1, d2, d3, int(s1, 2))
         y1 = Mux.mux4_v2(d4, d5, d6, d7, int(s1, 2))
 
@@ -258,17 +258,17 @@ class ULA:
         return 0
 
     @staticmethod
-    def ula(in_a, in_b, cin, operation):
+    def ula(in_a, in_b, cin, ula_controle):
 
         op_ula = {
-            0: ULA.func_and(in_a, in_b),
-            1: ULA.func_or(in_a, in_b),
-            2: ULA.func_sum(in_a, in_b, cin),
-            3: ULA.func_nor(in_a, in_b),
-            # 4: ULA.func_nand(in_a, in_b),
-            5: ULA.func_xor(in_a, in_b),
-            6: ULA.func_sub(in_a, in_b, cin),
-            7: ULA.func_slt(in_a, in_b)
+            0: ULA.func_and(in_a, in_b),        # 000
+            1: ULA.func_or(in_a, in_b),         # 001
+            2: Adder.adder(in_a, in_b, cin),    # 010
+            3: ULA.func_nor(in_a, in_b),        # 011
+            # 4: ULA.func_nand(in_a, in_b),     # 100
+            5: ULA.func_xor(in_a, in_b),        # 101
+            6: Sub.sub(in_a, in_b, cin),        # 110
+            7: ULA.func_slt(in_a, in_b)         # 111
         }
 
-        return op_ula.get(operation, "Operacao nao encontrada")
+        return op_ula.get(ula_controle, "Operação não encontrada")
