@@ -1,4 +1,4 @@
-module adder(
+module sub(
         input logic a, b, cin,
         output logic s, cout);
 

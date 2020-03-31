@@ -19,4 +19,5 @@ with open(constants.TV_PATH + constants.TV_NAME.get(FILENAME), 'w') as f:
                 s, cout = modules.Sub.sub(a, b, cin)
 
                 f.write(format(a, formatter) + constants.DELIMITER + format(b, formatter) + constants.DELIMITER + str(
-                    cin) + constants.DELIMITER + format(s, formatter) + constants.DELIMITER + format(cout, formatter) + '\n')
+                    cin) + constants.DELIMITER + format(s, formatter) + constants.DELIMITER
+                        + format(cout, formatter) + '\n')
