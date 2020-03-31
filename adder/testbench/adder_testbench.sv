@@ -18,7 +18,7 @@ module adder_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/adder/simulation/modelsim/adder.tv", vetor_teste);
+        $readmemb("adder.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 
