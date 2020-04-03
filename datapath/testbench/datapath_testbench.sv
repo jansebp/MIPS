@@ -23,7 +23,7 @@ module datapath_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/datapath/simulation/modelsim/datapath.tv", vetor_teste);
+        $readmemb("datapath.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 
@@ -31,8 +31,8 @@ module datapath_testbench();
         #8;
         rst=0;
 		  
-		  $display("########## Testbench do Datapath ##########");
-		  $display("Resultado:");
+        $display("########## Testbench do Datapath ##########");
+        $display("Resultado:");
     end
 
     always @(posedge clk) begin
