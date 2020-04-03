@@ -20,7 +20,7 @@ always begin
 end
 
 initial begin
-    $readmemb("C:/Users/janse/Documents/GitHub/MIPS/ula/simulation/modelsim/ula32.tv", vetor_teste);
+    $readmemb("ula32.tv", vetor_teste);
 
     idx = 0; qt_erros = 0;
 

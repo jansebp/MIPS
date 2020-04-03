@@ -20,7 +20,7 @@ module ula_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/ula/simulation/modelsim/ula.tv", vetor_teste);
+        $readmemb("ula.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 

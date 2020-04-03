@@ -8,15 +8,17 @@ module ula32(
     logic [31:0] cout, set;
 	 logic addSub;
 	
-	 assign addSub = (ULAcontrole == 1'b110 || ULAcontrole == 1'b111) ? 1'b1 : 1'b0;
+	 assign addSub = (ULAcontrole == 3'b110 || ULAcontrole == 3'b111) ? 1'b1 : 1'b0;
 
-    ula ula0(ULAcontrole, SrcA[0], SrcB[0], addSub, addSub, set[31], set[0], cout[0], ULAsaida[0]);
+    ula ula0(.ULAcontrole(ULAcontrole), .a(SrcA[0]), .b(SrcB[0]), .cin(addSub), .addsub(addSub)
+		, .less(set[31]), .set(set[0]), .cout(cout[0]), .ULAsaida(ULAsaida[0]));
 
     genvar j;
 
     generate
         for (j = 1; j < 32; j++) begin: ula
-            ula ula(ULAcontrole, SrcA[j], SrcB[j], cout[j-1], addSub, 1'b0, set[j], cout[j], ULAsaida[j]);
+            ula ula(.ULAcontrole(ULAcontrole), .a(SrcA[j]), .b(SrcB[j]), .cin(cout[j-1]), .addsub(addSub)
+					, .less(1'b0), .set(set[j]), .cout(cout[j]), .ULAsaida(ULAsaida[j]));
         end
     endgenerate
 
