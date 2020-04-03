@@ -17,6 +17,6 @@ module regbank(
 		end
 	endgenerate
 	
-	mux32_1 mux1(.a(registers_s), .sel(a1), .y(rd1));
-	mux32_1 mux2(.a(registers_s), .sel(a2), .y(rd2));
+	mux32_1 mux1(.sel(a1), .a(registers_s), .y(rd1));
+	mux32_1 mux2(.sel(a2), .a(registers_s), .y(rd2));
 endmodule
