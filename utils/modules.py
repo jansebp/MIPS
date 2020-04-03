@@ -271,7 +271,7 @@ class ULA:
             7: ULA.func_slt(in_a, in_b)  # 111
         }
 
-        return op_ula.get(ula_controle, "Operação não encontrada")
+        return op_ula.get(ula_controle, "Operacao nao encontrada")
 
     @staticmethod
     def ula(in_a, in_b, ula_controle):
@@ -296,10 +296,10 @@ class Datapath:
     @staticmethod
     def datapath(clock, reset, iord, reg_dst, mem_to_reg, ir_write, reg_write, ula_srcA, branch, pc_write, ula_srcB,
                  pc_src, ula_controle, rd):
-        zero, out_and_pc, pc_enable = 0
-        inputPC, outputPC, outRegInstr, outRegData, outRegA, outRegB, wd3, rd1, rd2 = 0
-        srcA, srcB, outSignExt, outShift2, alu_out, alu_result = 0
-        inShift2, outShiftJump, jumpADDR = 0
+        zero, out_and_pc, pc_enable = 0, 0, 0
+        inputPC, outputPC, outRegInstr, outRegData, outRegA, outRegB, wd3, rd1, rd2 = 0, 0, 0, 0, 0, 0, 0, 0, 0
+        srcA, srcB, outSignExt, outShift2, alu_out, alu_result = 0, 0, 0, 0, 0, 0
+        inShift2, outShiftJump, jumpADDR = 0, 0, 0
         outMux5 = 0
 
         out_and_pc = zero & branch
@@ -342,3 +342,177 @@ class Datapath:
         inputPC = Mux.mux4_v2(alu_result, alu_out, jumpADDR, 0, pc_src)
 
         return output_address, output_wd, output_overflow
+
+
+class Controller:
+    @staticmethod
+    def estados_fsm(estado):
+        estados = {
+            'S0': 0,
+            'S1': 1,
+            'S2': 2,
+            'S3': 3,
+            'S4': 4,
+            'S5': 5,
+            'S6': 6,
+            'S7': 7,
+            'S8': 8,
+            'S9': 9,
+            'S10': 10,
+            'S11': 11,
+        }
+        return estados.get(estado, "Estado Invalido")
+
+    @staticmethod
+    def configura_estado(estado, op_code):
+        if estado == Controller.estados_fsm('SO'):  # Fetch
+            iord, alu_srcb, ir_write, pc_write = (1,) * 1
+            alu_srca, alu_op, pc_src, mem_write, branch, reg_write = (0,) * 6
+            mem_to_reg, reg_dst = (-1,) * 2
+        elif estado == Controller.estados_fsm('S1'):  # Decode
+            alu_srcb = 3
+            alu_srca, alu_op, ir_write, pc_write, mem_write, branch, reg_write = (0,) * 7
+            iord, pc_src, mem_to_reg, reg_dst = (-1,) * 4
+        elif estado == Controller.estados_fsm('S2'):  # MEMADR
+            alu_srca, alu_srcb = 1, 2
+            alu_op, ir_write, pc_write, mem_write, branch, reg_write = (0,) * 6
+            iord, pc_src, mem_to_reg, reg_dst = (-1,) * 4
+        elif estado == Controller.estados_fsm('S3'):  # MEMREAD
+            iord = 1
+            alu_op, ir_write, pc_write, mem_write, branch, reg_write, pc_src = (0,) * 7
+            alu_srca, alu_srcb, mem_to_reg, reg_dst = (-1,) * 4
+        elif estado == Controller.estados_fsm('S4'):  # MEMWRITEBACK
+            mem_to_reg, reg_write = (1,) * 2
+            alu_op, ir_write, pc_write, reg_dst, mem_write, branch = (0,) * 6
+            iord, alu_srca, alu_srcb, pc_src = (-1,) * 4
+        elif estado == Controller.estados_fsm('S5'):  # MEMWRITE
+            iord, mem_write = (1,) * 2
+            branch, reg_write, alu_op, ir_write, pc_write = (0,) * 5
+            mem_to_reg, reg_dst, alu_srca, alu_srcb, pc_src = (-1,) * 5
+        elif estado == Controller.estados_fsm('S6'):  # EXECUTE
+            alu_srca = 1
+            alu_srcb, mem_write, branch, reg_write, ir_write, pc_write = (0,) * 6
+            mem_to_reg, iord, pc_src = (-1,) * 3
+            if (op_code == 4) or (op_code == 5) or (op_code == 20):
+                alu_op = 1
+            else:
+                alu_op = 0
+        elif estado == Controller.estados_fsm('S7'):  # ALUWRITEBACK
+            reg_dst, reg_write = (1,) * 2
+            mem_to_reg, mem_write, branch, ir_write, pc_write = (0,) * 5
+            iord, alu_srca, alu_srcb, alu_op, pc_src = (-1,) * 5
+        elif estado == Controller.estados_fsm('S8'):  # BRANCH
+            alu_srca, pc_src, alu_op, branch = (1,) * 4
+            alu_srcb, mem_write, reg_write, ir_write, pc_write = (0,) * 5
+            mem_to_reg, reg_dst, iord = (-1,) * 3
+        elif estado == Controller.estados_fsm('S9'):  # ADDIEXECUTE
+            alu_srca, alu_srcb = 1, 2
+            alu_op, mem_write, branch, reg_write, ir_write, pc_write = (0,) * 6
+            mem_to_reg, reg_dst, iord, pc_src = (-1,) * 4
+        elif estado == Controller.estados_fsm('S10'):  # ADDIWRITEBACK
+            reg_write = 1
+            reg_dst, mem_to_reg, mem_write, branch, alu_op, ir_write, pc_write = (0,) * 7
+            iord, alu_srca, alu_srcb, pc_src = (-1,) * 4
+        elif estado == Controller.estados_fsm('S11'):  # JUMP
+            pc_write, pc_src = 1, 2
+            mem_write, branch, reg_write, alu_op, ir_write = (0,) * 5
+            mem_to_reg, reg_dst, iord, alu_srca, alu_srcb = (-1,) * 5
+        else:
+            mem_write, branch, reg_write, ir_write, pc_write, alu_op = (0,) * 6
+            alu_srca, alu_srcb, mem_to_reg, reg_dst, iord, pc_src = (-1,) * 6
+        return iord, alu_srca, alu_srcb, alu_op, pc_src, ir_write, pc_write, mem_to_reg, reg_dst, mem_write, branch, reg_write
+
+    @staticmethod
+    def fsm(clock, reset, op_code):
+        alu_op, mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, reg_write, \
+            pc_src, proximo_estado = (0,) * 13
+
+        if reset == 0:
+            estado_atual = Controller.estados_fsm('SO')
+        elif clock == 1:
+            estado_atual = proximo_estado
+
+        # Configura as variaveis
+        iord, alu_srca, alu_srcb, alu_op, pc_src, ir_write, pc_write, mem_to_reg, reg_dst, mem_write, branch, \
+            reg_write = Controller.configura_estado(estado_atual, op_code)
+
+        # Configura os proximos estados
+        if estado_atual == Controller.estados_fsm('SO'):  # Fetch
+            proximo_estado = Controller.estados_fsm('S1')
+        elif estado_atual == Controller.estados_fsm('S1'):  # Decode
+            if op_code == 0:
+                proximo_estado = Controller.estados_fsm('S6')  # R-TYPE
+            elif op_code == 2:
+                proximo_estado = Controller.estados_fsm('S11')  # J
+            elif op_code == 4:
+                proximo_estado = Controller.estados_fsm('S8')  # BEQ
+            elif op_code == 8:
+                proximo_estado = Controller.estados_fsm('S9')  # ADDI
+            elif op_code == 35:
+                proximo_estado = Controller.estados_fsm('S2')  # LW
+            elif op_code == 43:
+                proximo_estado = Controller.estados_fsm('S2')  # SW
+            else:
+                proximo_estado = Controller.estados_fsm('S0')  # FETCH
+        elif estado_atual == Controller.estados_fsm('S2'):  # MEMADR
+            if op_code == 35:
+                proximo_estado = Controller.estados_fsm('S2')  # LW
+            elif op_code == 43:
+                proximo_estado = Controller.estados_fsm('S2')  # SW
+            else:
+                proximo_estado = Controller.estados_fsm('S0')  # FETCH
+        elif estado_atual == Controller.estados_fsm('S3'):  # MEMREAD
+            proximo_estado = Controller.estados_fsm('S4')
+        elif estado_atual == Controller.estados_fsm('S4'):  # MEMWRITEBACK
+            proximo_estado = Controller.estados_fsm('S0')
+        elif estado_atual == Controller.estados_fsm('S5'):  # MEMWRITE
+            proximo_estado = Controller.estados_fsm('S0')
+        elif estado_atual == Controller.estados_fsm('S6'):  # EXECUTE
+            proximo_estado = Controller.estados_fsm('S7')
+        elif estado_atual == Controller.estados_fsm('S7'):  # ALUWRITEBACK
+            proximo_estado = Controller.estados_fsm('S0')
+        elif estado_atual == Controller.estados_fsm('S8'):  # BRANCH
+            proximo_estado = Controller.estados_fsm('S0')
+        elif estado_atual == Controller.estados_fsm('S9'):  # ADDIEXECUTE
+            proximo_estado = Controller.estados_fsm('S10')
+        elif estado_atual == Controller.estados_fsm('S10'):  # ADDIWRITEBACK
+            proximo_estado = Controller.estados_fsm('S0')
+        elif estado_atual == Controller.estados_fsm('S11'):  # JUMP
+            proximo_estado = Controller.estados_fsm('S0')
+
+        return alu_op, mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, \
+            reg_write, pc_src
+
+    @staticmethod
+    def ula_decoder(funct, ula_op):
+        if ula_op == 0:
+            return 2
+        elif ula_op == 1:
+            return 6
+        else:
+            if funct == 32:
+                return 2
+            elif funct == 34:
+                return 6
+            elif funct == 36:
+                return 0
+            elif funct == 37:
+                return 1
+            elif funct == 38:
+                return 5
+            elif funct == 39:
+                return 3
+            elif funct == 42:
+                return 7
+            else:
+                return 2
+
+    @staticmethod
+    def controller(clock, reset, op_code, funct):
+        alu_op, mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, reg_write, \
+            pc_src = Controller.fsm(clock, reset, op_code)
+
+        ula_controle = Controller.ula_decoder(funct, alu_op)
+
+        return mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, reg_write, \
+            pc_src, ula_controle
