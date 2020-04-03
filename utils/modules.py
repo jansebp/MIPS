@@ -16,6 +16,25 @@ class Tristate:
             return 'z'
 
 
+class Flop:
+    @staticmethod
+    def flopr(in_d, in_clk, in_rst, q):
+        if in_rst == 1:
+            return 0
+        if in_clk == 1:
+            return in_d
+        return q
+
+    @staticmethod
+    def flopenr(in_d, in_enable, in_clk, in_rst, q):
+        if in_rst == 1:
+            return 0
+        if in_clk == 1:
+            if in_enable == 1:
+                return in_d
+        return q
+
+
 class Mux:
     @staticmethod
     def mux(input_a, input_b, selection):
@@ -67,29 +86,6 @@ class Mux:
         y3 = Mux.mux8(d24, d25, d26, d27, d28, d29, d30, d31, int(s1, 2))
 
         return Mux.mux4_v2(y0, y1, y2, y3, int(s2, 2))
-
-
-class Flop:
-    @staticmethod
-    def flopr(in_d, in_clk, in_rst, q):
-        if in_rst == 1:
-            return 0
-
-        if in_clk == 1:
-            return in_d
-
-        return q
-
-    @staticmethod
-    def flopenr(in_d, in_enable, in_clk, in_rst, q):
-        if in_rst == 1:
-            return 0
-
-        if in_clk == 1:
-            if in_enable == 1:
-                return in_d
-
-        return q
 
     @staticmethod
     def register_bank(a1, a2, a3, wd3, we3, clk, rst):
@@ -259,7 +255,6 @@ class ULA:
 
     @staticmethod
     def ula(in_a, in_b, cin, ula_controle):
-
         op_ula = {
             0: ULA.func_and(in_a, in_b),  # 000
             1: ULA.func_or(in_a, in_b),  # 001
@@ -296,10 +291,10 @@ class Datapath:
     @staticmethod
     def datapath(clock, reset, iord, reg_dst, mem_to_reg, ir_write, reg_write, ula_srcA, branch, pc_write, ula_srcB,
                  pc_src, ula_controle, rd):
-        zero, out_and_pc, pc_enable = 0, 0, 0
-        inputPC, outputPC, outRegInstr, outRegData, outRegA, outRegB, wd3, rd1, rd2 = 0, 0, 0, 0, 0, 0, 0, 0, 0
-        srcA, srcB, outSignExt, outShift2, alu_out, alu_result = 0, 0, 0, 0, 0, 0
-        inShift2, outShiftJump, jumpADDR = 0, 0, 0
+        zero, out_and_pc, pc_enable = (0,)*3
+        inputPC, outputPC, outRegInstr, outRegData, outRegA, outRegB, wd3, rd1, rd2 = (0,)*9
+        srcA, srcB, outSignExt, outShift2, alu_out, alu_result = (0,)*6
+        inShift2, outShiftJump, jumpADDR = (0,)*3
         outMux5 = 0
 
         out_and_pc = zero & branch
@@ -420,12 +415,13 @@ class Controller:
         else:
             mem_write, branch, reg_write, ir_write, pc_write, alu_op = (0,) * 6
             alu_srca, alu_srcb, mem_to_reg, reg_dst, iord, pc_src = (-1,) * 6
-        return iord, alu_srca, alu_srcb, alu_op, pc_src, ir_write, pc_write, mem_to_reg, reg_dst, mem_write, branch, reg_write
+        return iord, alu_srca, alu_srcb, alu_op, pc_src, ir_write, pc_write, mem_to_reg, reg_dst, mem_write, branch, \
+               reg_write
 
     @staticmethod
     def fsm(clock, reset, op_code):
         alu_op, mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, reg_write, \
-            pc_src, proximo_estado = (0,) * 13
+        pc_src, proximo_estado = (0,) * 13
 
         if reset == 0:
             estado_atual = Controller.estados_fsm('SO')
@@ -434,7 +430,7 @@ class Controller:
 
         # Configura as variaveis
         iord, alu_srca, alu_srcb, alu_op, pc_src, ir_write, pc_write, mem_to_reg, reg_dst, mem_write, branch, \
-            reg_write = Controller.configura_estado(estado_atual, op_code)
+        reg_write = Controller.configura_estado(estado_atual, op_code)
 
         # Configura os proximos estados
         if estado_atual == Controller.estados_fsm('SO'):  # Fetch
@@ -481,7 +477,7 @@ class Controller:
             proximo_estado = Controller.estados_fsm('S0')
 
         return alu_op, mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, \
-            reg_write, pc_src
+               reg_write, pc_src
 
     @staticmethod
     def ula_decoder(funct, ula_op):
@@ -510,9 +506,9 @@ class Controller:
     @staticmethod
     def controller(clock, reset, op_code, funct):
         alu_op, mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, reg_write, \
-            pc_src = Controller.fsm(clock, reset, op_code)
+        pc_src = Controller.fsm(clock, reset, op_code)
 
         ula_controle = Controller.ula_decoder(funct, alu_op)
 
         return mem_to_reg, reg_dst, iord, alu_srca, alu_srcb, ir_write, mem_write, pc_write, branch, reg_write, \
-            pc_src, ula_controle
+               pc_src, ula_controle

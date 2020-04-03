@@ -18,7 +18,7 @@ module sub_testbench();
     end
 
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/sub/simulation/modelsim/sub.tv", vetor_teste);
+        $readmemb("sub.tv", vetor_teste);
 
         idx = 0; qt_erros = 0;
 

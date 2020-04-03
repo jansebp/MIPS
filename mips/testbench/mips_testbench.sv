@@ -21,7 +21,7 @@ module mips_testbench();
     end
     
     initial begin
-        $readmemb("C:/Users/janse/Documents/GitHub/MIPS/mips/simulation/modelsim/mips.tv", vetor_teste);
+        $readmemb("mips.tv", vetor_teste);
     
         idx = 0; qt_erros = 0;
 
@@ -29,25 +29,25 @@ module mips_testbench();
         #5;
         rst = 0;
 
-        file = $fopen("C:/Users/janse/Documents/GitHub/MIPS/mips/memory.tv", "w");
+        file = $fopen("memory.tv", "w");
 
         for(int i = 0; i < 128; i++) begin
             memory[i] = 8'b00000000;
         end
     
-        {memory[0], memory[1], memory[2], memory[3]} = 32'b10001100000000010000000000100000; // primeira instruÃ§Ã£o - lw
-		  {memory[4], memory[5], memory[6], memory[7]} = 32'b10101100000000010000000000100100; // segunda instruÃ§Ã£o - sw
-		  {memory[8], memory[9], memory[10], memory[11]} = 32'b10001100000000100000000000101000; // terceira instruÃ§Ã£o - lw
-		  {memory[12], memory[13], memory[14], memory[15]} = 32'b00100000010000110000000000000001; // quarta instruÃ§Ã£o - addi 
-		  {memory[16], memory[17], memory[18], memory[19]} = 32'b10101100000000110000000001000000; // quinta instruÃ§Ã£o - sw
-		  {memory[20], memory[21], memory[22], memory[23]} = 32'b00001000000000000000000000010011;// sexta instruÃ§Ã£o - jump
-		  {memory[76], memory[77], memory[78], memory[79]} = 32'b00000000001000100010000000100000; // sÃ©tima instruÃ§Ã£o - add
-		  {memory[80], memory[81], memory[82], memory[83]} = 32'b10101100000001000000000000101100; // oitava instruÃ§Ã£o - sw
-		  {memory[32], memory[33], memory[34], memory[35]} = 32'b00000000000000000000000000001111; // carregando valor na memÃ³ria
-		  {memory[40], memory[41], memory[42], memory[43]} = 32'b00000000000000000000000000001100; // carregando valor na memÃ³ria
+        {memory[0], memory[1], memory[2], memory[3]} = 32'b10001100000000010000000000100000; // primeira instrucao - lw
+		  {memory[4], memory[5], memory[6], memory[7]} = 32'b10101100000000010000000000100100; // segunda instrucao - sw
+		  {memory[8], memory[9], memory[10], memory[11]} = 32'b10001100000000100000000000101000; // terceira instrucao - lw
+		  {memory[12], memory[13], memory[14], memory[15]} = 32'b00100000010000110000000000000001; // quarta instrucao - addi
+		  {memory[16], memory[17], memory[18], memory[19]} = 32'b10101100000000110000000001000000; // quinta instrucao - sw
+		  {memory[20], memory[21], memory[22], memory[23]} = 32'b00001000000000000000000000010011;// sexta instrucao - jump
+		  {memory[76], memory[77], memory[78], memory[79]} = 32'b00000000001000100010000000100000; // setima instrucao - add
+		  {memory[80], memory[81], memory[82], memory[83]} = 32'b10101100000001000000000000101100; // oitava instrucao - sw
+		  {memory[32], memory[33], memory[34], memory[35]} = 32'b00000000000000000000000000001111; // carregando valor na memoria
+		  {memory[40], memory[41], memory[42], memory[43]} = 32'b00000000000000000000000000001100; // carregando valor na memoria
     
         count = 0;
-        $fwrite(file,"------------MemÃ³ria inicial------------\n");
+        $fwrite(file,"------------Memoria inicial------------\n");
 
         for(int i = 0; i < 128; i++) begin
             if(count == 4 ) begin
@@ -105,7 +105,7 @@ module mips_testbench();
                 #1
                 count = 0;
 
-                $fwrite(file,"\n-------------MemÃ³ria final-------------\n");
+                $fwrite(file,"\n-------------Memoria final-------------\n");
 
                 for(int i = 0; i < 128; i++) begin
                     if(count == 4 ) begin
